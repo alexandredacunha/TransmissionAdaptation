@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  VizualizerEngine.py
+#  VisualizerEngine.py
 #  
 #  Copyright 2018 Alex C <dacunha.alexandre@gmail.com>
 #  
