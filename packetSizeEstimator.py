@@ -23,7 +23,6 @@
 #  
 
 
-
 class PacketSizeEstimatorBase(object):
     """Base class for packet size estimator"""
     def __init__(self):
@@ -50,3 +49,4 @@ class FixedPacketSize(PacketSizeEstimatorBase):
     def get_optimal_size_for_next_transmission(self):
         return self.packet_size
   
+

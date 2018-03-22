@@ -30,8 +30,11 @@ class Sender(object):
 
     def __init__(self):
         self.interface = None
-        self.data_size = 10
+        self.packet_size_estimator = None
         print("sender created!")
+
+    def register_packet_size_estimator(self, packet_size_estimator):
+        self.packet_size_estimator = packet_size_estimator
 
     def register_interface(self, interface):
         self.interface = interface
@@ -44,15 +47,19 @@ class Sender(object):
         
     def _handle_acknack(self, msg):
         #print "Got " + msg.acknack
+        self.packet_size_estimator.store_last_transmission_result()
         pass
 
+    def _build_data_packet(self):
+        data_msg = messages.DataPacketMsg()
+        data_msg.payload_size = self.packet_size_estimator.get_optimal_size_for_next_transmission()
+        data_msg.discard = self.interface.mark_message_as_garbage(data_msg.payload_size)
+        return data_msg
 
     def run(self):
         msg = self.receive()
         if msg != None:
             if msg.msg_id == 2:
                 self._handle_acknack(msg)
-        data_msg = messages.DataPacketMsg()
-        data_msg.payload_size = self.data_size
-        data_msg.discard = self.interface.mark_message_as_garbage(self.data_size)
+        data_msg = self._build_data_packet()
         self.send(data_msg)

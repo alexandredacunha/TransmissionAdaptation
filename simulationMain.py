@@ -25,6 +25,8 @@
 import receiver
 import sender
 import channel
+import visualizerEngine
+import packetSizeEstimator
 
 import os
 import sys
@@ -33,8 +35,6 @@ import argparse
 import logging
 import csv
 from copy import copy
-
-
 
 results=[]
 row=[]
@@ -49,16 +49,29 @@ def parse_arguments():
     return parser.parse_args()
 
 def setup_and_run_simulation(simulation_length, data_size, channel_quality):
-    my_receiver = receiver.Receiver()
-    my_data_generator = sender.Sender()
+
+    #Channel setup
     interface = channel.Channel(simulation_length)
     #interface.generate_channel_noise_model()
+    #interface.plot_channel()
+    #exit()
     interface.set_channel_to_fixed_quality_value(channel_quality)
-    my_data_generator.register_interface(interface)
+    
+    #Packet size Estimator configuration
+    packet_estimator = packetSizeEstimator.FixedPacketSize()
+    packet_estimator.packet_size = data_size
+    
+    #Receiver config
+    my_receiver = receiver.Receiver()
     my_receiver.register_interface(interface)
-
-    my_data_generator.data_size = data_size
-    print data_size
+    
+    #sender config
+    my_data_generator = sender.Sender()
+    my_data_generator.register_packet_size_estimator(packet_estimator)
+    my_data_generator.register_interface(interface)
+    
+    print "packet size: " + str(data_size)
+    print "channel quality: " + str(channel_quality)
 
     while interface.get_time() < simulation_length:
         my_data_generator.run()
@@ -83,8 +96,8 @@ def start(args):
     #logging.basicConfig(filename='mainlog.log',level=logging.DEBUG)
     logging.basicConfig(level=logging.INFO,format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
-    for payload_size in range(100, 1100, 50):
-        for channel_quality in range(0, 600, 50):
+    for payload_size in range(0, 1050, 50):
+        for channel_quality in range(0, 100, 10):
             setup_and_run_simulation(simulation_length, payload_size, channel_quality)
         print row
         new_row = copy(row)
@@ -92,8 +105,7 @@ def start(args):
         del row[:]
     
     write_to_csv()
-
-
+    t = visualizerEngine.CsvPlot3D(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')
 
 def main():
     """Logic of the script."""

@@ -27,6 +27,8 @@ import random
 import numpy
 import messages
 import logging
+import math
+import visualizerEngine
 
 class Channel(object):
     """A class for """
@@ -35,7 +37,7 @@ class Channel(object):
         self._receiver_queue = Queue.Queue()
         self._sender_queue = Queue.Queue()
         self._max_time = simulation_length
-        self._comunication_quality_vector = numpy.full(self._max_time, 300)
+        self._channel_quality_vector = numpy.full(self._max_time, 100)
         self._time = 0
 
     def _get_caller_name(self):
@@ -68,17 +70,46 @@ class Channel(object):
             raise RuntimeError('uknown receiver')
 
     def generate_channel_noise_model(self):
-        pass
+        initial_CQ = 50
+        current_CQ = initial_CQ
+        time_index = 0
+        self._channel_quality_vector[time_index] = current_CQ
+        time_index += 1
+        while 1:
+            next_limit = int(random.uniform(0, 100))
+            if next_limit < current_CQ:
+                while current_CQ > next_limit:
+                    rate = int(random.uniform(0, 20))
+                    current_CQ -= rate
+                    current_CQ = max(0, current_CQ)
+                    self._channel_quality_vector[time_index] = current_CQ
+                    time_index += 1
+                    if time_index >= (self._max_time - 1):
+                        return
+            elif next_limit > current_CQ:
+                while current_CQ < next_limit:
+                    rate =  int(random.uniform(0, 20))
+                    current_CQ += rate
+                    current_CQ = min(100, current_CQ)
+                    self._channel_quality_vector[time_index] = current_CQ
+                    time_index += 1
+                    if time_index >= (self._max_time - 1):
+                        return
+
+    def plot_channel(self):
+        visualizerEngine.PlotXYgraph(
+            title = "generated channel", 
+            vector = self._channel_quality_vector)
         
     def set_channel_to_fixed_quality_value(self, channel_quality):
-        self._comunication_quality_vector = numpy.full(self._max_time, channel_quality)
+        self._channel_quality_vector = numpy.full(self._max_time, channel_quality)
         
     def mark_message_as_garbage(self, size):
         max_size = 1000
-        channel_quality = self._comunication_quality_vector[self._time]/10
-        probability_failing_transmission = 100 - ((size/10) - ((channel_quality*size)/max_size))
-        logging.debug('Probability of failing transmission %d' % probability_failing_transmission)
-        if random.uniform(0, 100) < probability_failing_transmission:
+        channel_quality = self._channel_quality_vector[self._time]
+        probability_successful_transmission = 100 - (((size/10) - ((channel_quality*size)/max_size)))
+        logging.debug('Probability of successful transmission %d' % probability_successful_transmission)
+        if random.uniform(0, 100) < probability_successful_transmission:
             return False
         else:
             return True

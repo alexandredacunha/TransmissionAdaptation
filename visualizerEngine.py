@@ -34,16 +34,36 @@ If you don't have pyOpenGL or opensimplex, then:
 import numpy as np
 from pyqtgraph.Qt import QtCore, QtGui
 import pyqtgraph.opengl as gl
+import pyqtgraph
 import sys
 from opensimplex import OpenSimplex
 
+class PlotXYgraph(object):
+    def __init__(self, title = 'not given', vector = None):
+        """
+        Initialize the graphics window and mesh
+        """
+        self.title = title
+        self.app = QtGui.QApplication(sys.argv)
+        
+        self.win = pyqtgraph.GraphicsWindow(title=title)
+        self.win.resize(500,200)
+        self.win.setWindowTitle(title)
+        p1 = self.win.addPlot(title=title, y=vector)
+        self.start()
+        
+    def start(self):
+        """
+        get the graphics window open and setup
+        """
+        if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+            QtGui.QApplication.instance().exec_()
 
 class CsvPlot3D(object):
     def __init__(self, title = 'not given', csvfile = 'default.csv'):
         """
         Initialize the graphics window and mesh
         """
-
         self.title = title
         # setup the view window
         self.app = QtGui.QApplication(sys.argv)
@@ -77,6 +97,8 @@ class CsvPlot3D(object):
         p1.scale(1.0, 1.0, 10)
         p1.translate(-x_length/2, -y_length /2, 0)
         self.w.addItem(p1)
+        
+        self.start()
 
 
     def start(self):
@@ -99,5 +121,5 @@ class CsvPlot3D(object):
 
 if __name__ == '__main__':
     t = CsvPlot3D(csvfile = 'csvfile.csv')
-    t.start()
+
 
