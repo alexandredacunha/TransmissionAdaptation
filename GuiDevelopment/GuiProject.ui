@@ -27,11 +27,11 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="simulation_parameters">
         <attribute name="title">
-         <string>General Parameters</string>
+         <string>Main Parameters</string>
         </attribute>
         <widget class="QLineEdit" name="max_packet_size">
          <property name="geometry">
@@ -85,7 +85,7 @@
         <widget class="QLineEdit" name="simulation_lenth">
          <property name="geometry">
           <rect>
-           <x>140</x>
+           <x>150</x>
            <y>60</y>
            <width>91</width>
            <height>31</height>
@@ -100,7 +100,7 @@
           <rect>
            <x>20</x>
            <y>70</y>
-           <width>111</width>
+           <width>121</width>
            <height>17</height>
           </rect>
          </property>
@@ -108,6 +108,217 @@
           <string>Simulation Lenth</string>
          </property>
         </widget>
+       </widget>
+       <widget class="QWidget" name="channel_model">
+        <attribute name="title">
+         <string>Channel Model</string>
+        </attribute>
+        <widget class="QPushButton" name="pushButton">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>20</y>
+           <width>161</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Show channel model</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>60</y>
+           <width>161</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Generate noise</string>
+         </property>
+        </widget>
+        <widget class="QGraphicsView" name="graphicsView">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>100</y>
+           <width>371</width>
+           <height>161</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="min_packet_size_2">
+         <property name="geometry">
+          <rect>
+           <x>330</x>
+           <y>20</y>
+           <width>51</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="inputMethodHints">
+          <set>Qt::ImhDigitsOnly</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_5">
+         <property name="geometry">
+          <rect>
+           <x>210</x>
+           <y>30</y>
+           <width>111</width>
+           <height>17</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Set fixed quality</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="log_control">
+        <attribute name="title">
+         <string>Logs</string>
+        </attribute>
+        <widget class="QCheckBox" name="checkBox">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>20</y>
+           <width>111</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>sender logs</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="checkBox_2">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>50</y>
+           <width>111</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>receiver logs</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="checkBox_3">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>80</y>
+           <width>111</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>channel logs</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="checkBox_4">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>110</y>
+           <width>121</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>trainning logs</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="size_estimator">
+        <attribute name="title">
+         <string>Estimator</string>
+        </attribute>
+        <widget class="QRadioButton" name="radioButton">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>40</y>
+           <width>116</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Fixed size</string>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="radioButton_2">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>70</y>
+           <width>211</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Neural Network - Keras</string>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="radioButton_3">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>100</y>
+           <width>231</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Neural Network - Tensor Flow</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_4">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>10</y>
+           <width>121</width>
+           <height>17</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Estimator in Use</string>
+         </property>
+        </widget>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>429</x>
+      <y>9</y>
+      <width>691</width>
+      <height>311</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QTabWidget" name="tabWidget_2">
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>Tab 1</string>
+        </attribute>
        </widget>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
