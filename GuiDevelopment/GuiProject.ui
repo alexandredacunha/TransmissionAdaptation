@@ -27,16 +27,16 @@
      <item row="0" column="0">
       <widget class="QTabWidget" name="Visualization">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
          <string>MLP TF visualization</string>
         </attribute>
        </widget>
-       <widget class="QWidget" name="tab_2">
+       <widget class="QWidget" name="genetic_algorithm">
         <attribute name="title">
-         <string>Tab 2</string>
+         <string>Genetic Algorithm</string>
         </attribute>
        </widget>
       </widget>
@@ -56,7 +56,7 @@
      <item row="0" column="0">
       <widget class="QTabWidget" name="Estimator_configuration">
        <property name="currentIndex">
-        <number>1</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="mlp_tf">
         <attribute name="title">
@@ -135,15 +135,64 @@
          </property>
         </widget>
        </widget>
-       <widget class="QWidget" name="mlp_tf_trainning">
+       <widget class="QWidget" name="mlp_tf_training">
         <attribute name="title">
-         <string>MLP TF trainning</string>
+         <string>MLP TF training</string>
         </attribute>
+        <widget class="QPushButton" name="start_trainning">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>50</y>
+           <width>98</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Start</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_9">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>20</y>
+           <width>131</width>
+           <height>17</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Number of seasons</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="number_of_seasons">
+         <property name="geometry">
+          <rect>
+           <x>160</x>
+           <y>10</y>
+           <width>61</width>
+           <height>31</height>
+          </rect>
+         </property>
+        </widget>
        </widget>
-       <widget class="QWidget" name="mlp_rl">
+       <widget class="QWidget" name="genetic_algorithm">
         <attribute name="title">
-         <string>MLP RL</string>
+         <string>Genetic Algorithm</string>
         </attribute>
+        <widget class="QPushButton" name="start_trainning_2">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>20</y>
+           <width>98</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Start</string>
+         </property>
+        </widget>
        </widget>
       </widget>
      </item>
@@ -162,7 +211,7 @@
      <item row="0" column="0">
       <widget class="QTabWidget" name="general_settings">
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="simulation_parameters">
         <attribute name="title">
@@ -428,6 +477,19 @@
          </property>
          <property name="text">
           <string>Estimator in Use</string>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="radioButton_4">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>130</y>
+           <width>231</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Genetic Algorithm 1</string>
          </property>
         </widget>
        </widget>
