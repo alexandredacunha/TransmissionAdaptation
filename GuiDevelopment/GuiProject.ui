@@ -38,6 +38,66 @@
         <attribute name="title">
          <string>Genetic Algorithm</string>
         </attribute>
+        <widget class="QGraphicsView" name="graphicsView_ga1">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>201</width>
+           <height>361</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QGraphicsView" name="graphicsView_ga3">
+         <property name="geometry">
+          <rect>
+           <x>430</x>
+           <y>10</y>
+           <width>411</width>
+           <height>361</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QGraphicsView" name="graphicsView_ga4">
+         <property name="geometry">
+          <rect>
+           <x>850</x>
+           <y>10</y>
+           <width>241</width>
+           <height>121</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QGraphicsView" name="graphicsView_ga5">
+         <property name="geometry">
+          <rect>
+           <x>850</x>
+           <y>140</y>
+           <width>241</width>
+           <height>111</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QGraphicsView" name="graphicsView_ga6">
+         <property name="geometry">
+          <rect>
+           <x>850</x>
+           <y>260</y>
+           <width>241</width>
+           <height>111</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QGraphicsView" name="graphicsView_ga2">
+         <property name="geometry">
+          <rect>
+           <x>220</x>
+           <y>10</y>
+           <width>201</width>
+           <height>361</height>
+          </rect>
+         </property>
+        </widget>
        </widget>
       </widget>
      </item>
@@ -56,7 +116,7 @@
      <item row="0" column="0">
       <widget class="QTabWidget" name="Estimator_configuration">
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="mlp_tf">
         <attribute name="title">
@@ -211,7 +271,7 @@
      <item row="0" column="0">
       <widget class="QTabWidget" name="general_settings">
        <property name="currentIndex">
-        <number>3</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="simulation_parameters">
         <attribute name="title">
