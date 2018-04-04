@@ -29,6 +29,7 @@ class PacketSizeEstimatorBase(object):
         self.channel_quality_reported = None
         #ack = 1; nack = 0
         self.transmission_results = None
+        self.score = 0
 
     def get_optimal_size_for_next_transmission(self):
         return self._run_algorithm()

@@ -30,16 +30,12 @@ import numpy
 
 class PacketSizeEstimatorGeneticAlgorithm(PacketSizeEstimatorBase):
     def __init__(self):
-        default_size = 1000
+        default_size = 0
         self.packet_size = default_size
         self.model = None
         
     def create_model(self, )
-        self.model = Sequential()
-        self.model.add(Dense(5, input_dim=3, init='uniform', activation='relu'))
-        self.model.add(Dense(5, init='uniform', activation='relu'))
-        self.model.add(Dense(1, init='uniform', activation='sigmoid'))
-        self.model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        pass
 
 def main():
 

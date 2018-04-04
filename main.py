@@ -68,8 +68,10 @@ class Ui_MainWindow(object):
         self.gridLayout_2 = QtGui.QGridLayout(self.gridLayoutWidget_2)
         self.gridLayout_2.setMargin(0)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
+        
         self.Estimator_configuration = QtGui.QTabWidget(self.gridLayoutWidget_2)
         self.Estimator_configuration.setObjectName(_fromUtf8("Estimator_configuration"))
+        
         self.mlp_tf = QtGui.QWidget()
         self.mlp_tf.setObjectName(_fromUtf8("mlp_tf"))
         self.label_6 = QtGui.QLabel(self.mlp_tf)
