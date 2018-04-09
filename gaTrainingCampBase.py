@@ -30,15 +30,30 @@ import gc
 class gaOptimizerBase(object):
     """A class for """
 
-    def __init__(self, population_size = 10, generations = 10, winners_pct = 40.0, crossover_prob = 0.5, mutation_prob = 0.1):
+    def __init__(self, population_size = 20, \
+                       generations = 10, \
+                       winners_pct = 40.0, \
+                       offsprings_from_winners_pct = 20.0, \
+                       offsprings_from_random_winners_pct = 20.0, \
+                       crossover_prob = 0.5, \
+                       mutation_prob = 0.1):
         print("Trainning camp created!")
         self.max_generations = generations
         self.population_size = population_size
         self.population_list = []
         self._winners_list = []
-        self._new_idividuals_created_from_genetic_operations_list = []
+        self._new_created_from_genetic_operations_list = []
         self.estimator = None
-        self.number_of_winners = self.population_size/2
+        self.nbr_winners = int( winners_pct * self.population_size / 100)
+        self.nbr_offsprings_from_top_winners = int( offsprings_from_winners_pct * self.population_size / 100)
+        self.nbr_offsprings_from_top_winners = self.nbr_offsprings_from_top_winners - (self.nbr_offsprings_from_top_winners % 2)
+        self.nbr_offsprings_from_random_winners = int( offsprings_from_random_winners_pct * self.population_size / 100)
+        self.nbr_offsprings_from_random_winners = self.nbr_offsprings_from_random_winners - (self.nbr_offsprings_from_random_winners % 2)
+        self.nbr_offsprings_random_mutations = self.population_size - \
+                                               self.nbr_winners - \
+                                               nbr_offsprings_from_winners - \
+                                               nbr_offsprings_from_random_winners
+        
         self.crossover_probability = crossover_prob
         self.mutation_probability = mutation_prob
         self._winners_pct = winners_pct 
@@ -83,7 +98,7 @@ class gaOptimizerBase(object):
         self._merge_lists_to_create_new_population_ready_for_next_round()
         
     def _merge_lists_to_create_new_population_ready_for_next_round(self):
-        self.population_list = self._winners_list + self._new_idividuals_created_from_genetic_operations_list
+        self.population_list = self._winners_list + self._new_created_from_genetic_operations_list
 
     def _sort_population_by_fitness(self):
         self.population_list.sort(key=lambda x: x.score, reverse = True)
@@ -95,10 +110,16 @@ class gaOptimizerBase(object):
 # below this point should be implemented in derived classes for other genetic algorithms implementations
 
     def _create_offsprings_as_crossover_from_top_winners(self)
-        pass
+        for n in range(0, self.nbr_offsprings_from_top_winners, 2):
+            self._new_created_from_genetic_operations_list.add(self.estimator.crossover(self._winners_list[n], self._winners_list[n+1]))
+            
 
     def _create_offsprings_as_crossover_from_random_winners(self)
-        pass
+        for n in range(0, self.nbr_offsprings_from_random_winners, 2):
+            a = random.randint(1, self.nbr_winners)
+            b = random.randint(1, self.nbr_winners)
+            self._new_created_from_genetic_operations_list.add(self.estimator.crossover(self.population_list[a], self.population_list[b]))
+
 
     def _apply_random_mutations_on_each_offspring_to_add_some_variations(self):
         pass
