@@ -31,10 +31,10 @@ class PacketSizeEstimatorBase():
         self.transmission_results = None
         self.score = 0
 
-    def get_optimal_size_for_next_transmission(self):
+    def get_optimal_size_for_next_tx(self):
         return self._run_algorithm()
         
-    def store_last_transmission_result(self):
+    def store_last_tx_result(self, acknack, cqi):
         pass
     
     def _run_algorithm(self):
@@ -47,7 +47,7 @@ class FixedPacketSize(PacketSizeEstimatorBase):
         default_size = 1000
         self.packet_size = default_size
 
-    def get_optimal_size_for_next_transmission(self):
+    def get_optimal_size_for_next_tx(self):
         return self.packet_size
   
 

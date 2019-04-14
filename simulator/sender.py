@@ -45,14 +45,14 @@ class Sender():
     def send(self, msg):
         return self.interface.send(msg)
         
-    def _handle_acknack(self, msg):
+    def _handle_acknack(self, acknack_msg):
         #print "Got " + msg.acknack
-        self.packet_size_estimator.store_last_transmission_result()
+        self.packet_size_estimator.store_last_tx_result(acknack_msg.acknack, acknack_msg.cqi)
         pass
 
     def _build_data_packet(self):
         data_msg = messages.DataPacketMsg()
-        data_msg.payload_size = self.packet_size_estimator.get_optimal_size_for_next_transmission()
+        data_msg.payload_size = self.packet_size_estimator.get_optimal_size_for_next_tx()
         data_msg.discard = self.interface.mark_message_as_garbage(data_msg.payload_size)
         return data_msg
 
@@ -62,4 +62,5 @@ class Sender():
             if msg.msg_id == 2:
                 self._handle_acknack(msg)
         data_msg = self._build_data_packet()
+        data_msg.cqi = self.interface.get_current_cqi()
         self.send(data_msg)

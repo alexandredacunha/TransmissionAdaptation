@@ -114,6 +114,9 @@ class Channel():
         else:
             return True
 
+    def get_current_cqi(self):
+        return self._channel_quality_vector[self._time]
+
     def increment_time_base(self):
         self._time += 1
 

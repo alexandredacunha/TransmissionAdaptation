@@ -26,7 +26,7 @@ from simulator import receiver
 from simulator import sender
 from simulator import channel
 import visualizerEngine
-import packetSizeEstimator
+from packetsizecalculator import packetSizeEstimator
 
 import os
 import sys
@@ -86,7 +86,7 @@ def write_to_csv():
     writer = csv.writer(output_file)
     writer.writerows(results)
 
-def start(args):
+def show_channel_model(args):
     """Start the syslog service.
 
     :param args: Information provided by the user as argparse arguments.
@@ -110,7 +110,7 @@ def start(args):
 def main():
     """Logic of the script."""
     args = parse_arguments()
-    start(args)
+    show_channel_model(args)
     sys.stdout.flush()
     #loop()
 

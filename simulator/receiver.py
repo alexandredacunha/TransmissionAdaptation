@@ -67,6 +67,7 @@ class Receiver(object):
             self.total_data += msg.payload_size
             self.stats.total_data_received += msg.payload_size
             self.stats.total_acks += 1
+        response.cqi = msg.cqi
         self.send(response)
     
     def print_stats(self):

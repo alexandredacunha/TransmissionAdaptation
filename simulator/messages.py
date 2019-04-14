@@ -39,6 +39,7 @@ class DataPacketMsg(messageBase):
         self._msg_id = 0x01
         self._payload_size = 0
         self._discard = False
+        self._cqi = 0
     
     @property
     def payload_size(self):
@@ -56,12 +57,21 @@ class DataPacketMsg(messageBase):
     def discard(self, discard):
         self._discard = discard
 
-        
+    @property
+    def cqi(self):
+        return self._cqi
+
+    @cqi.setter
+    def cqi(self, cqi):
+        self._cqi = 0
+
+
 class AckNackMsg(messageBase):
     def __init__(self):
         self._msg_id = 0x02
         self._acknack = None
-    
+        self._cqi = 0
+
     @property
     def acknack(self):
         return self._acknack
@@ -69,3 +79,11 @@ class AckNackMsg(messageBase):
     @acknack.setter
     def acknack(self, acknack):
         self._acknack = acknack
+
+    @property
+    def cqi(self):
+        return self._cqi
+
+    @cqi.setter
+    def cqi(self, cqi):
+        self._cqi = 0
