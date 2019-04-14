@@ -23,7 +23,7 @@
 #  
 
 
-class PacketSizeEstimatorBase(object):
+class PacketSizeEstimatorBase():
     """Base class for packet size estimator"""
     def __init__(self):
         self.channel_quality_reported = None
