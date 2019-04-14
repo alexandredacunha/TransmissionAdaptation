@@ -22,9 +22,9 @@
 #  
 #  
 
-import receiver
-import sender
-import channel
+from simulator import receiver
+from simulator import sender
+from simulator import channel
 import visualizerEngine
 import packetSizeEstimator
 
@@ -42,7 +42,7 @@ row=[]
 
 def parse_arguments():
     """Provide a command line interface and parse provided arguments."""
-    parser = argparse.ArgumentParser(description='AI experiemnt')
+    parser = argparse.ArgumentParser(description='AI experiment')
 #    parser.add_argument('-d', help="Directory where to store the log", dest="log_dir", required=False)
 #    parser.add_argument('-l', help="Log file name", dest="log_name", required=False
 #    parser.add_argument('-s', help="Log size limit", dest='file_limit', type=int, default=0)
@@ -70,8 +70,8 @@ def setup_and_run_simulation(simulation_length, data_size, channel_quality):
     my_data_generator.register_packet_size_estimator(packet_estimator)
     my_data_generator.register_interface(interface)
     
-    print "packet size: " + str(data_size)
-    print "channel quality: " + str(channel_quality)
+    print("packet size: " + str(data_size))
+    print("channel quality: " + str(channel_quality))
 
     while interface.get_time() < simulation_length:
         my_data_generator.run()
@@ -82,7 +82,7 @@ def setup_and_run_simulation(simulation_length, data_size, channel_quality):
     row.append(my_receiver.stats.total_data_received)
 
 def write_to_csv():
-    output_file = open("csvfile.csv", "wb")
+    output_file = open("csvfile.csv", "w")
     writer = csv.writer(output_file)
     writer.writerows(results)
 
@@ -97,9 +97,9 @@ def start(args):
     logging.basicConfig(level=logging.INFO,format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
     for payload_size in range(0, 1050, 50):
-        for channel_quality in range(0, 100, 10):
+        for channel_quality in range(0, 110, 10):
             setup_and_run_simulation(simulation_length, payload_size, channel_quality)
-        print row
+        print(row)
         new_row = copy(row)
         results.append(new_row)
         del row[:]
