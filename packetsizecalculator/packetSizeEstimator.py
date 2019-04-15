@@ -22,6 +22,9 @@
 #  
 #  
 
+DEFAULT_SIZE = 1000
+MAX_SIZE = 1000
+MIN_SIZE = 0
 
 class PacketSizeEstimatorBase():
     """Base class for packet size estimator"""
@@ -44,10 +47,25 @@ class PacketSizeEstimatorBase():
 class FixedPacketSize(PacketSizeEstimatorBase):
     """fixed packet size estimator"""
     def __init__(self):
-        default_size = 1000
-        self.packet_size = default_size
+        self.packet_size = DEFAULT_SIZE
 
     def get_optimal_size_for_next_tx(self):
         return self.packet_size
-  
+
+
+class SimpleEstimator(PacketSizeEstimatorBase):
+    """simple packet size estimator"""
+    def __init__(self):
+        self.packet_size = DEFAULT_SIZE/2
+        self._up_rate = 1
+        self._down_rate = 1
+
+    def get_optimal_size_for_next_tx(self):
+        return self.packet_size
+
+    def store_last_tx_result(self, acknack, cqi):
+        if acknack == "ACK":
+            self.packet_size = min(self.packet_size + self._up_rate, 1000)
+        if acknack == "NACK":
+            self.packet_size = max(self.packet_size - self._down_rate, 0)
 

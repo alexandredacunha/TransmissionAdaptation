@@ -22,12 +22,6 @@
 #  
 #  
 
-from simulator import receiver
-from simulator import sender
-from simulator import channel
-import visualizerEngine
-from packetsizecalculator import packetSizeEstimator
-
 import os
 import sys
 import time
@@ -35,6 +29,11 @@ import argparse
 import logging
 import csv
 from copy import copy
+from simulator import receiver
+from simulator import sender
+from simulator import channel
+import visualizerEngine
+from packetsizecalculator import packetSizeEstimator
 
 results=[]
 row=[]
@@ -48,30 +47,16 @@ def parse_arguments():
 #    parser.add_argument('-s', help="Log size limit", dest='file_limit', type=int, default=0)
     return parser.parse_args()
 
-def setup_and_run_simulation(simulation_length, data_size, channel_quality):
+def setup_and_run_simulation(interface, packet_size_estimator, simulation_length):
 
-    #Channel setup
-    interface = channel.Channel(simulation_length)
-    #interface.generate_channel_noise_model()
-    #interface.plot_channel()
-    #exit()
-    interface.set_channel_to_fixed_quality_value(channel_quality)
-    
-    #Packet size Estimator configuration
-    packet_estimator = packetSizeEstimator.FixedPacketSize()
-    packet_estimator.packet_size = data_size
-    
     #Receiver config
     my_receiver = receiver.Receiver()
     my_receiver.register_interface(interface)
     
     #sender config
     my_data_generator = sender.Sender()
-    my_data_generator.register_packet_size_estimator(packet_estimator)
+    my_data_generator.register_packet_size_estimator(packet_size_estimator)
     my_data_generator.register_interface(interface)
-    
-    print("packet size: " + str(data_size))
-    print("channel quality: " + str(channel_quality))
 
     while interface.get_time() < simulation_length:
         my_data_generator.run()
@@ -87,7 +72,7 @@ def write_to_csv():
     writer.writerows(results)
 
 def show_channel_model(args):
-    """Start the syslog service.
+    """show_channel_model.
 
     :param args: Information provided by the user as argparse arguments.
     """
@@ -98,7 +83,18 @@ def show_channel_model(args):
 
     for payload_size in range(0, 1050, 50):
         for channel_quality in range(0, 110, 10):
-            setup_and_run_simulation(simulation_length, payload_size, channel_quality)
+            print("packet size: " + str(payload_size))
+            print("channel quality: " + str(channel_quality))
+            #Channel setup
+            interface = channel.Channel(simulation_length)
+            interface.set_channel_to_fixed_quality_value(channel_quality)
+            #Estimator setup
+            estimator = packetSizeEstimator.FixedPacketSize()
+            estimator.packet_size = payload_size
+            #simulation start
+            setup_and_run_simulation(interface, 
+                                     estimator,
+                                     simulation_length)
         print(row)
         new_row = copy(row)
         results.append(new_row)
@@ -107,10 +103,36 @@ def show_channel_model(args):
     write_to_csv()
     t = visualizerEngine.CsvPlot3D(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')
 
+def run_test_simple_estimator(args):
+    """run_test_simple_estimator.
+
+    :param args: Information provided by the user as argparse arguments.
+    """
+    simulation_length = 1000
+    estimator = packetSizeEstimator.SimpleEstimator()
+    #logging.basicConfig(filename='mainlog.log',level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO,format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+    interface = channel.Channel(simulation_length)
+    interface.generate_channel_noise_model()
+    #interface.plot_channel()
+    #exit()
+    setup_and_run_simulation(interface, 
+                             estimator,
+                             simulation_length)
+    print(row)
+    #new_row = copy(row)
+    #results.append(new_row)
+    #del row[:]
+    
+    #write_to_csv()
+    #t = visualizerEngine.CsvPlot3D(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')
+
+
 def main():
     """Logic of the script."""
     args = parse_arguments()
     show_channel_model(args)
+    #run_test_simple_estimator(args)
     sys.stdout.flush()
     #loop()
 
