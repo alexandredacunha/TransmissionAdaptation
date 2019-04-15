@@ -77,9 +77,9 @@ class Channel():
         time_index += 1
         while 1:
             next_limit = int(random.uniform(0, 100))
+            rate = int(random.uniform(1, 10))
             if next_limit < current_CQ:
                 while current_CQ > next_limit:
-                    rate = int(random.uniform(0, 20))
                     current_CQ -= rate
                     current_CQ = max(0, current_CQ)
                     self._channel_quality_vector[time_index] = current_CQ
@@ -87,8 +87,8 @@ class Channel():
                     if time_index >= (self._max_time - 1):
                         return
             elif next_limit > current_CQ:
+                rate =  int(random.uniform(1, 20))
                 while current_CQ < next_limit:
-                    rate =  int(random.uniform(0, 20))
                     current_CQ += rate
                     current_CQ = min(100, current_CQ)
                     self._channel_quality_vector[time_index] = current_CQ

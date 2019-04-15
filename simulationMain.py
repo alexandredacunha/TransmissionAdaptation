@@ -120,6 +120,8 @@ def run_test_simple_estimator(args):
                              estimator,
                              simulation_length)
     print(row)
+    interface.plot_channel()
+    estimator.plot_calculated_sizes()
     #new_row = copy(row)
     #results.append(new_row)
     #del row[:]
@@ -131,8 +133,8 @@ def run_test_simple_estimator(args):
 def main():
     """Logic of the script."""
     args = parse_arguments()
-    show_channel_model(args)
-    #run_test_simple_estimator(args)
+    #show_channel_model(args)
+    run_test_simple_estimator(args)
     sys.stdout.flush()
     #loop()
 

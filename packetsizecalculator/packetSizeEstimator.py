@@ -22,6 +22,8 @@
 #  
 #  
 
+import visualizerEngine
+
 DEFAULT_SIZE = 1000
 MAX_SIZE = 1000
 MIN_SIZE = 0
@@ -57,15 +59,28 @@ class SimpleEstimator(PacketSizeEstimatorBase):
     """simple packet size estimator"""
     def __init__(self):
         self.packet_size = DEFAULT_SIZE/2
-        self._up_rate = 1
-        self._down_rate = 1
+        self._up_rate = 10
+        self._down_rate = 10
+        self.calculated_sizes = []
 
     def get_optimal_size_for_next_tx(self):
+        self.store_sizes()
         return self.packet_size
 
     def store_last_tx_result(self, acknack, cqi):
         if acknack == "ACK":
             self.packet_size = min(self.packet_size + self._up_rate, 1000)
+            print(self.packet_size)
         if acknack == "NACK":
             self.packet_size = max(self.packet_size - self._down_rate, 0)
+            print(self.packet_size)
+            
+    def store_sizes(self):
+        self.calculated_sizes.append(self.packet_size)
+        
+    def plot_calculated_sizes(self):
+        print(self.calculated_sizes)
+        visualizerEngine.PlotXYgraph(
+            title = "sizes", 
+            vector = self.calculated_sizes)
 
