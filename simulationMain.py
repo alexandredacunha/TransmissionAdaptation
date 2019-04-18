@@ -32,7 +32,7 @@ from copy import copy
 from simulator import receiver
 from simulator import sender
 from simulator import channel
-import visualizerEngine
+import visualizerEngineMatplotlib as visualizerEngine
 from packetsizecalculator import packetSizeEstimator
 
 results=[]
@@ -133,8 +133,8 @@ def run_test_simple_estimator(args):
 def main():
     """Logic of the script."""
     args = parse_arguments()
-    #show_channel_model(args)
-    run_test_simple_estimator(args)
+    show_channel_model(args)
+    #run_test_simple_estimator(args)
     sys.stdout.flush()
     #loop()
 

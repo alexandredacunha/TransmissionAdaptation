@@ -28,7 +28,7 @@ import numpy
 from simulator import messages
 import logging
 import math
-import visualizerEngine
+import visualizerEngineMatplotlib as visualizerEngine
 
 class Channel():
     """A class for """

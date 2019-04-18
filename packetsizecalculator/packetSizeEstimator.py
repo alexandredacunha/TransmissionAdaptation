@@ -22,7 +22,7 @@
 #  
 #  
 
-import visualizerEngine
+import visualizerEngineMatplotlib as visualizerEngine
 
 DEFAULT_SIZE = 1000
 MAX_SIZE = 1000
