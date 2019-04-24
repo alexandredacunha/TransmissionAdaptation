@@ -52,7 +52,7 @@ class Sender():
 
     def _build_data_packet(self):
         data_msg = messages.DataPacketMsg()
-        data_msg.payload_size = self.packet_size_estimator.get_optimal_size_for_next_tx()
+        data_msg.payload_size = self.packet_size_estimator.get_optimal_size_for_next_tx(self.interface.get_time())
         data_msg.discard = self.interface.mark_message_as_garbage(data_msg.payload_size)
         return data_msg
 

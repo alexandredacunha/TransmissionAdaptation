@@ -122,18 +122,32 @@ def run_test_simple_estimator(args):
     print(row)
     interface.plot_channel()
     estimator.plot_calculated_sizes()
-    #new_row = copy(row)
-    #results.append(new_row)
-    #del row[:]
-    
-    #write_to_csv()
-    #t = visualizerEngine.CsvPlot3D(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')
 
+def run_test_DQN_estimator(args):
+    """run_test_simple_estimator.
+
+    :param args: Information provided by the user as argparse arguments.
+    """
+    simulation_length = 1000
+    estimator = packetSizeEstimator.DQNEstimator_3_actions()
+    #logging.basicConfig(filename='mainlog.log',level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO,format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+    interface = channel.Channel(simulation_length)
+    interface.generate_channel_noise_model()
+    #interface.plot_channel()
+    #exit()
+    setup_and_run_simulation(interface, 
+                             estimator,
+                             simulation_length)
+    print(row)
+    interface.plot_channel()
+    estimator.plot_calculated_sizes()
 
 def main():
     """Logic of the script."""
     args = parse_arguments()
     show_channel_model(args)
+    #run_test_DQN_estimator(args)
     #run_test_simple_estimator(args)
     sys.stdout.flush()
     #loop()

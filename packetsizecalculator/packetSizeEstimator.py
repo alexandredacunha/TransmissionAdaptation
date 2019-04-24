@@ -22,7 +22,10 @@
 #  
 #  
 
+from abc import ABCMeta, abstractmethod
 import visualizerEngineMatplotlib as visualizerEngine
+from packetsizecalculator.DQNAgent import DQNAgent
+from packetsizecalculator.DQNAgent import MINI_BATCH_SIZE
 
 DEFAULT_SIZE = 1000
 MAX_SIZE = 1000
@@ -31,18 +34,16 @@ MIN_SIZE = 0
 class PacketSizeEstimatorBase():
     """Base class for packet size estimator"""
     def __init__(self):
+        self.channel_quality_reported_prev = None
         self.channel_quality_reported = None
-        #ack = 1; nack = 0
-        self.transmission_results = None
+        self.transmission_results = None    # ack = 1; nack = 0
         self.score = 0
 
-    def get_optimal_size_for_next_tx(self):
-        return self._run_algorithm()
+    @abstractmethod
+    def get_optimal_size_for_next_tx(self, time):
+        pass
         
     def store_last_tx_result(self, acknack, cqi):
-        pass
-    
-    def _run_algorithm(self):
         pass
 
 
@@ -51,7 +52,7 @@ class FixedPacketSize(PacketSizeEstimatorBase):
     def __init__(self):
         self.packet_size = DEFAULT_SIZE
 
-    def get_optimal_size_for_next_tx(self):
+    def get_optimal_size_for_next_tx(self, time):
         return self.packet_size
 
 
@@ -63,16 +64,16 @@ class SimpleEstimator(PacketSizeEstimatorBase):
         self._down_rate = 10
         self.calculated_sizes = []
 
-    def get_optimal_size_for_next_tx(self):
-        self.store_sizes()
+    def get_optimal_size_for_next_tx(self, time):
+        self.store_sizes(channel_quality_reported_prev, channel_quality_reported, )
         return self.packet_size
 
     def store_last_tx_result(self, acknack, cqi):
         if acknack == "ACK":
-            self.packet_size = min(self.packet_size + self._up_rate, 1000)
+            self.packet_size = min(self.packet_size + self._up_rate, MAX_SIZE)
             print(self.packet_size)
         if acknack == "NACK":
-            self.packet_size = max(self.packet_size - self._down_rate, 0)
+            self.packet_size = max(self.packet_size - self._down_rate, MIN_SIZE)
             print(self.packet_size)
             
     def store_sizes(self):
@@ -84,3 +85,64 @@ class SimpleEstimator(PacketSizeEstimatorBase):
             title = "sizes", 
             vector = self.calculated_sizes)
 
+
+class DQNEstimator_3_actions(PacketSizeEstimatorBase):
+    """simple packet size estimator"""
+    def __init__(self):
+        self.packet_size = DEFAULT_SIZE/2
+        self._up_rate = 1
+        self._down_rate = 1
+        self.calculated_sizes = []
+        self.dqn_agent = DQNAgent(4,3)
+        
+        self._prev_state = None
+        self._prev_action = None
+
+    def get_optimal_size_for_next_tx(self, time):
+        reward = (self.transmission_results * self.packet_size)
+        state = (self.channel_quality_reported_prev,
+                 self.channel_quality_reported,
+                 self.transmission_results,
+                 self.packet_size)
+        if (self._prev_state != None): # not store first time 
+            self.dqn_agent.store_transition_in_D(self._prev_state, 
+                                                 self._prev_action, 
+                                                 reward,
+                                                 state)
+        if len(self.dqn_agent.memory_D) > MINI_BATCH_SIZE:
+            self.dqn_agent.replay(MINI_BATCH_SIZE)
+        # calculate best action from model
+        action = DQNAgent.act(state)
+        if action == 0:
+            pass # do nothing
+        elif action == 1:
+            self.packet_size = max(self.packet_size - self._down_rate, MIN_SIZE)
+        elif action == 2:
+            self.packet_size = min(self.packet_size + self._up_rate, MAX_SIZE)    
+        
+        # keep state, action, reward to store in memory D when new state received
+        self._prev_state = state
+        self._prev_action = action
+
+        self.store_sizes()
+        return self.packet_size
+
+    def store_last_tx_result(self, acknack, cqi):
+        if self.channel_quality_reported != None:
+            self.channel_quality_reported_prev = self.channel_quality_reported
+        else:
+            self.channel_quality_reported_prev = cqi # avoid init errors
+        self.channel_quality_reported = cqi
+        if acknack == "ACK":
+            self.transmission_results = 1
+        if acknack == "NACK":
+            self.transmission_results = 0
+            
+    def store_sizes(self):
+        self.calculated_sizes.append(self.packet_size)
+        
+    def plot_calculated_sizes(self):
+        print(self.calculated_sizes)
+        visualizerEngine.PlotXYgraph(
+            title = "sizes", 
+            vector = self.calculated_sizes)

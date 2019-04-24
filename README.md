@@ -17,30 +17,25 @@ Setup environment:
 sudo apt-get install libffi-dev libssl-dev
 sudo apt-get install python3-dev
 sudo apt-get install python3-pip
-sudo apt-get install python3-pyqt4
-sudo apt-get install python3-pyqt4.qtopengl
 sudo apt-get install python3-opengl
-#sudo apt-get install python3-pyqt5
 sudo apt-get install python3-numpy
+sudo apt-get install python3-tk
 
 sudo apt-get install python-opengl
 sudo apt-get install python-numpy
-sudo apt-get install python-qt4
-sudo apt-get install python-qt4-gl
 sudo apt-get install python-dev
-sudo apt-get install python-pyqtgraph
 
 pip3 install --upgrade pyopenssl ndg-httpsclient pyasn1 pip
 pip3 install tensorflow
 pip3 install keras
-pip3 install pyqtgraph
 pip3 install opensimplex
 pip3 install PyOpenGL 
-#pip3 install pyqt5
-#PyOpenGL_accelerate ??? 
+pip3 install numpy
+pip3 install pandas
+pip3 install matplotlib
 
 other python packages:
-.matplotlib
-.numpy
-.pandas
 .vtk
+
+# if no support for Tensorflow AVX instructions
+pip3 install tensorflow==1.5
