@@ -60,15 +60,14 @@ class DQNAgent():
         self.epsilon_decay = pow(FINAL_EXPLORATION, 1.0/FINAL_EXPLORATION_STEP)
         self.epsilon_min = FINAL_EXPLORATION 
         self.learning_rate = LEARNING_RATE
-        self.Q_function_NN = _build_Q_value_function_NN()
+        self.Q_function_NN = self._build_Q_value_function_NN()
         
     def _build_Q_value_function_NN(self):
         mlp = Sequential()
         mlp.add(Dense(12, input_dim=self.state_size, activation='relu'))
         mlp.add(Dense(12, activation='relu'))
         mlp.add(Dense(self.action_size, activation='linear'))
-        mlp.compile(loss='mse',
-                      optimizer=Adam(lr=self.learning_rate))
+        mlp.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
         return mlp
         
     def store_transition_in_D(self, state, action, reward, next_state):
@@ -79,26 +78,27 @@ class DQNAgent():
         if np.random.rand() <= self.epsilon_greedy:
             exploration_action = random.randrange(self.action_size)
             return exploration_action
+        print("EXPLOIT!!!!")
         exploitation_action_from_Q = self.Q_function_NN.predict(state)[0]
         action_corresponding_max_predicted_reward = np.argmax(exploitation_action_from_Q)
         return action_corresponding_max_predicted_reward
         
     def replay(self, batch_size):
-        sample_minibatch_from_memory_D = random.sample(self.memory, batch_size)
+        sample_minibatch_from_memory_D = random.sample(self.memory_D, batch_size)
         for state, action, reward, next_state in sample_minibatch_from_memory_D:
             target_y = reward 
             done = False 
             if not done: # estimate future rewards always in our case, game does not end
-                Q_in_next_state_when_optimal_action_taken = np.amax(self.Q_function_NN.predict(next_state)[0])
-                target_y = (reward + self.gamma * Q_in_next_state_when_optimal_action_taken)
+                reward_in_next_state_when_optimal_action_taken = np.amax(self.Q_function_NN.predict(next_state)[0])
+                target_y = (reward + self.gamma * reward_in_next_state_when_optimal_action_taken)
             Q_state_action = self.Q_function_NN.predict(state)
             # correct the output state with what would be the real reward from 
             # experience when having selecting the "action" and predicted future reward
-            Q_fi_aj_weights[0][action] = target_y 
+            Q_state_action[0][action] = target_y 
             # gradient descent giving calculated above rewards array as training data
-            self.Q_function_NN.fit(state, target_predicted, epochs=1, verbose=0) 
-        if self.epsilon > self.epsilon_min:
-            self.epsilon *= self.epsilon_decay
+            self.Q_function_NN.fit(state, Q_state_action, epochs=1, verbose=0) 
+        if self.epsilon_greedy > self.epsilon_min:
+            self.epsilon_greedy *= self.epsilon_decay
 
     def load(self, name):
         self.Q_function_NN.load_weights(name)

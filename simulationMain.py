@@ -146,9 +146,9 @@ def run_test_DQN_estimator(args):
 def main():
     """Logic of the script."""
     args = parse_arguments()
-    show_channel_model(args)
+    #show_channel_model(args)
     #run_test_DQN_estimator(args)
-    #run_test_simple_estimator(args)
+    run_test_simple_estimator(args)
     sys.stdout.flush()
     #loop()
 
