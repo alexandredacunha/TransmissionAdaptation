@@ -86,4 +86,4 @@ class AckNackMsg(messageBase):
 
     @cqi.setter
     def cqi(self, cqi):
-        self._cqi = 0
+        self._cqi = cqi

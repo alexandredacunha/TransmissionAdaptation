@@ -32,7 +32,7 @@ from copy import copy
 from simulator import receiver
 from simulator import sender
 from simulator import channel
-import visualizerEngineMatplotlib as visualizerEngine
+import visualizationtools.visualizerEngineMatplotlib as visualizerEngine
 from packetsizecalculator import packetSizeEstimator
 
 results=[]
@@ -129,7 +129,7 @@ def run_test_DQN_estimator(args):
     :param args: Information provided by the user as argparse arguments.
     """
     simulation_length = 1000
-    estimator = packetSizeEstimator.DQNEstimator_3_actions()
+    estimator = packetSizeEstimatorDQN.DQNEstimator_3_actions()
     #logging.basicConfig(filename='mainlog.log',level=logging.DEBUG)
     logging.basicConfig(level=logging.INFO,format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
     interface = channel.Channel(simulation_length)

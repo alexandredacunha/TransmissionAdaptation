@@ -27,68 +27,13 @@ import numpy as np
 import visualizationtools.visualizerEngineMatplotlib as visualizerEngine
 from packetsizecalculator.DQNAgent import DQNAgent
 from packetsizecalculator.DQNAgent import MINI_BATCH_SIZE
+from packetsizecalculator.packetSizeEstimator import PacketSizeEstimatorBase
 
 DEFAULT_SIZE = 1000/2
 MAX_SIZE = 1000
 MIN_SIZE = 0
 ACK = 1
 NACK = -1
-
-class PacketSizeEstimatorBase():
-    """Base class for packet size estimator"""
-    def __init__(self):
-        self.channel_quality_reported_prev = None
-        self.channel_quality_reported = None
-        self.transmission_results = None
-        self.score = 0
-
-    @abstractmethod
-    def get_optimal_size_for_next_tx(self, time):
-        pass
-        
-    def store_last_tx_result(self, acknack, cqi):
-        pass
-
-
-class FixedPacketSize(PacketSizeEstimatorBase):
-    """fixed packet size estimator"""
-    def __init__(self):
-        super(FixedPacketSize, self).__init__()
-        self.packet_size = DEFAULT_SIZE
-
-    def get_optimal_size_for_next_tx(self, time):
-        return self.packet_size
-
-
-class SimpleEstimator(PacketSizeEstimatorBase):
-    """simple packet size estimator"""
-    def __init__(self):
-        super(SimpleEstimator, self).__init__()
-        self.packet_size = DEFAULT_SIZE
-        self._up_rate = 50
-        self._down_rate = 50
-        self.calculated_sizes = []
-
-    def get_optimal_size_for_next_tx(self, time):
-        self.store_sizes()
-        return self.packet_size
-
-    def store_last_tx_result(self, acknack, cqi):
-        if acknack == "ACK":
-            self.packet_size = min(self.packet_size + self._up_rate, MAX_SIZE)
-            print(self.packet_size)
-        if acknack == "NACK":
-            self.packet_size = max(self.packet_size - self._down_rate, MIN_SIZE)
-            print(self.packet_size)
-            
-    def store_sizes(self):
-        self.calculated_sizes.append(self.packet_size)
-        
-    def plot_calculated_sizes(self):
-        print(self.calculated_sizes)
-        visualizerEngine.PlotXYgraph(
-            title = "sizes", 
-            vector = self.calculated_sizes)
 
 
 class DQNEstimator_3_actions(PacketSizeEstimatorBase):

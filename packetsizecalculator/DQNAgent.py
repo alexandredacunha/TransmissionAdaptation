@@ -22,7 +22,7 @@
 #  
 #  
 
-import visualizerEngineMatplotlib as visualizerEngine
+import visualizationtools.visualizerEngineMatplotlib as visualizerEngine
 
 import random
 import numpy as np
@@ -37,7 +37,7 @@ AGENT_HISTORY_LENGTH = 1 # not used
 TARGET_NETWORK_UPDATE_FREQUENCY = 100000 # not used
 DISCOUNT_FACTOR = 0.99
 ACTION_REPEAT = 4 # not used
-LEARNING_RATE = 0.0025
+LEARNING_RATE = 0.005
 GRADIENT_MOMENTUM = 0.95 # not used
 SQUARED_GRADIENT_MOMENTUM = 0.95 # not used
 MIN_SQUARED_GRADIENT = 0.01 # not used
@@ -46,7 +46,6 @@ FINAL_EXPLORATION = 0.1
 FINAL_EXPLORATION_STEP = 1000
 REPLAY_START_SIZE = 100
 NO_OP_MAX = 30 # not used
-
 
 
 class DQNAgent():
@@ -64,8 +63,8 @@ class DQNAgent():
         
     def _build_Q_value_function_NN(self):
         mlp = Sequential()
-        mlp.add(Dense(12, input_dim=self.state_size, activation='relu'))
-        mlp.add(Dense(12, activation='relu'))
+        mlp.add(Dense(12, input_dim=self.state_size, activation='relu', kernel_initializer='random_uniform', bias_initializer='zeros'))
+        mlp.add(Dense(12, activation='relu', kernel_initializer='random_uniform', bias_initializer='zeros'))
         mlp.add(Dense(self.action_size, activation='linear'))
         mlp.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
         return mlp
@@ -80,21 +79,33 @@ class DQNAgent():
             return exploration_action
         print("EXPLOIT!!!!")
         exploitation_action_from_Q = self.Q_function_NN.predict(state)[0]
+        print(exploitation_action_from_Q)
         action_corresponding_max_predicted_reward = np.argmax(exploitation_action_from_Q)
+        print("action " + str(action_corresponding_max_predicted_reward))
         return action_corresponding_max_predicted_reward
         
     def replay(self, batch_size):
         sample_minibatch_from_memory_D = random.sample(self.memory_D, batch_size)
         for state, action, reward, next_state in sample_minibatch_from_memory_D:
+            print("-----------")
+            print("state: " + str(state))
+            print("action: " + str(action))
+            print("reward: " + str(reward))
+            #print(next_state)
             target_y = reward 
             done = False 
             if not done: # estimate future rewards always in our case, game does not end
                 reward_in_next_state_when_optimal_action_taken = np.amax(self.Q_function_NN.predict(next_state)[0])
                 target_y = (reward + self.gamma * reward_in_next_state_when_optimal_action_taken)
             Q_state_action = self.Q_function_NN.predict(state)
+            print("predicted state: " + str(Q_state_action))
             # correct the output state with what would be the real reward from 
             # experience when having selecting the "action" and predicted future reward
             Q_state_action[0][action] = target_y 
+            print("expected: " + str(Q_state_action))
+
+            Q_state_action = normalize(Q_state_action)
+            print("expected Norm : " + str(Q_state_action))
             # gradient descent giving calculated above rewards array as training data
             self.Q_function_NN.fit(state, Q_state_action, epochs=1, verbose=0) 
         if self.epsilon_greedy > self.epsilon_min:
@@ -105,3 +116,10 @@ class DQNAgent():
 
     def save(self, name):
         self.Q_function_NN.save_weights(name)
+
+        
+def normalize(v):
+    norm = np.linalg.norm(v)
+    if norm == 0: 
+       return v
+    return v / norm

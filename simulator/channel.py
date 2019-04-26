@@ -28,7 +28,7 @@ import numpy
 from simulator import messages
 import logging
 import math
-import visualizerEngineMatplotlib as visualizerEngine
+import visualizationtools.visualizerEngineMatplotlib as visualizerEngine
 
 class Channel():
     """A class for """
@@ -97,6 +97,7 @@ class Channel():
                         return
 
     def plot_channel(self):
+        print(self._channel_quality_vector)
         visualizerEngine.PlotXYgraph(
             title = "generated channel", 
             vector = self._channel_quality_vector)
