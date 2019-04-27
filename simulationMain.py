@@ -28,12 +28,14 @@ import time
 import argparse
 import logging
 import csv
+import numpy as np
 from copy import copy
 from simulator import receiver
 from simulator import sender
 from simulator import channel
 import visualizationtools.visualizerEngineMatplotlib as visualizerEngine
 from packetsizecalculator import packetSizeEstimator
+from packetsizecalculator import packetSizeEstimatorDQN
 
 results=[]
 row=[]
@@ -103,52 +105,41 @@ def show_channel_model(args):
     write_to_csv()
     t = visualizerEngine.CsvPlot3D(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')
 
-def run_test_simple_estimator(args):
+def run_test(args, estimator, simulation_length = 1000):
     """run_test_simple_estimator.
 
     :param args: Information provided by the user as argparse arguments.
     """
-    simulation_length = 1000
-    estimator = packetSizeEstimator.SimpleEstimator()
+
     #logging.basicConfig(filename='mainlog.log',level=logging.DEBUG)
     logging.basicConfig(level=logging.INFO,format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
     interface = channel.Channel(simulation_length)
     interface.generate_channel_noise_model()
-    #interface.plot_channel()
-    #exit()
     setup_and_run_simulation(interface, 
                              estimator,
                              simulation_length)
     print(row)
-    interface.plot_channel()
-    estimator.plot_calculated_sizes()
-
-def run_test_DQN_estimator(args):
-    """run_test_simple_estimator.
-
-    :param args: Information provided by the user as argparse arguments.
-    """
-    simulation_length = 1000
-    estimator = packetSizeEstimatorDQN.DQNEstimator_3_actions()
-    #logging.basicConfig(filename='mainlog.log',level=logging.DEBUG)
-    logging.basicConfig(level=logging.INFO,format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
-    interface = channel.Channel(simulation_length)
-    interface.generate_channel_noise_model()
-    #interface.plot_channel()
-    #exit()
-    setup_and_run_simulation(interface, 
-                             estimator,
-                             simulation_length)
-    print(row)
-    interface.plot_channel()
-    estimator.plot_calculated_sizes()
+    print(len(np.array(estimator.calculated_sizes)))
+    reference_shape = ((interface._channel_quality_vector).shape)
+     
+    combined_chart_data = np.stack((interface._channel_quality_vector, 
+                                    np.resize(np.array(estimator.calculated_sizes), reference_shape)))
+    visualizerEngine.PlotXYgraph(vector = combined_chart_data, 
+                                 title = 'Estimator',
+                                 dataseries = "rows")
 
 def main():
     """Logic of the script."""
     args = parse_arguments()
     #show_channel_model(args)
-    #run_test_DQN_estimator(args)
-    run_test_simple_estimator(args)
+   
+    run_test(args, packetSizeEstimator.SimpleEstimator())
+    #run_test(args, packetSizeEstimatorDQN.DQNEstimator_3_actions(), simulation_length = 1000)
+    
+    #t = visualizerEngine.CsvPlot3D(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')
+    #t = visualizerEngine.PlotXYgraph(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')
+    #t = visualizerEngine.PlotXYgraph(vector = [[1,2,3,4,5,6],[1,2,3,4,5,6]], title = 'Throughput(channel_quality, packet_size)', dataseries = "rows") 
+    #t = visualizerEngine.PlotXYgraph(vector = [[1,2,3,4,5,6],[1,2,3,4,5,6]], title = 'Throughput(channel_quality, packet_size)', dataseries = "columns") 
     sys.stdout.flush()
     #loop()
 

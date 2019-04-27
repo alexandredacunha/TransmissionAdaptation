@@ -30,15 +30,21 @@ import logging
 import math
 import visualizationtools.visualizerEngineMatplotlib as visualizerEngine
 
+MAX_RATE_UP = 2.5
+MAX_RATE_DOWN = 2.5
+
 class Channel():
     """A class for """
     
-    def __init__(self, simulation_length):
+    def __init__(self, simulation_length, csvfilelog = None):
         self._receiver_queue = queue.Queue()
         self._sender_queue = queue.Queue()
         self._max_time = simulation_length
         self._channel_quality_vector = numpy.full(self._max_time, 100)
         self._time = 0
+        self._csvfile = None
+        if csvfilelog != None:
+            self._csvfile = open(csvfilelog, "w")
 
     def _get_caller_name(self):
         stack = inspect.stack()
@@ -77,7 +83,7 @@ class Channel():
         time_index += 1
         while 1:
             next_limit = int(random.uniform(0, 100))
-            rate = int(random.uniform(1, 10))
+            rate = (random.uniform(1, MAX_RATE_DOWN))
             if next_limit < current_CQ:
                 while current_CQ > next_limit:
                     current_CQ -= rate
@@ -87,7 +93,7 @@ class Channel():
                     if time_index >= (self._max_time - 1):
                         return
             elif next_limit > current_CQ:
-                rate =  int(random.uniform(1, 20))
+                rate =  (random.uniform(1, MAX_RATE_UP))
                 while current_CQ < next_limit:
                     current_CQ += rate
                     current_CQ = min(100, current_CQ)
@@ -116,6 +122,8 @@ class Channel():
             return True
 
     def get_current_cqi(self):
+        if self._csvfile != None:
+            self._csvfile.write("{}\n".format(self._channel_quality_vector[self._time]))
         return self._channel_quality_vector[self._time]
 
     def increment_time_base(self):

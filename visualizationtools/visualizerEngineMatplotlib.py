@@ -31,20 +31,83 @@ If you don't have pyOpenGL or opensimplex, then:
     - pip install opensimplex
 """
 
+import os
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from matplotlib.colors import LightSource
+from matplotlib import cm
 import pandas as pd
 from numpy import genfromtxt
 import numpy as np
-from matplotlib.colors import LightSource
-from matplotlib import cm
 
-class PlotXYgraph():
-    def __init__(self, title = 'not given', vector = None):
+
+
+class PlotXYgraph_live():
+    def __init__(self, title = 'not given', vector = None, csvfile = None, buffer_size = 100):
+        if csvfile != None:
+             my_data = genfromtxt(csvfile, delimiter=',')
+     
+    def animate(self):
+         pass   
+
+
+class PlotXYgraph_from_multiple_csvfiles():
+    def __init__(self, title = 'not given', csvfile_list = None):
         """
         plot xy chart using matplotlib
         """
         pass
+
+    def show(self):
+        pass
+
+
+class PlotXYgraph():
+    def __init__(self, title = 'not given', vector = None, csvfile = None, ylabels_vector = None, dataseries = "columns"):
+        """
+        plot xy chart using matplotlib
+        """
+        if csvfile != None:
+            chart_data = genfromtxt(csvfile, delimiter=',')
+            if title == "not given":
+                title = os.path.basename(csvfile)
+        else:
+            chart_data = vector
+        self.fig = plt.figure(title)
+        try:
+            len(chart_data[0])
+            chart_data = np.array(chart_data)
+            if dataseries == "columns":
+                chart_data = chart_data.T
+            num_charts = len(chart_data)
+        except TypeError:
+            num_charts = 1
+        if ylabels_vector != None:
+            data_label = ylabels_vector
+        else:
+            data_label = ["dummy"] * num_charts
+        chart_num = 1
+        for data_series_vector in chart_data:
+            if num_charts == 1:
+                data_series_vector = chart_data
+            ax = self.fig.add_subplot(num_charts, 1, chart_num ,ylabel = data_label[chart_num-1])
+            ax.plot(data_series_vector)
+            ax.set_yticklabels([])
+            #ax.set_xlim(left=0, right=DAY_SIZE)
+            if chart_num < num_charts:
+                ax.set_xticklabels([])
+            chart_num = chart_num + 1
+            ax.yaxis.label.set_fontsize(7)
+            ax.yaxis.label.set_rotation(0)
+            if num_charts == 1:
+                break
+
+        plt.show()
+
+    def show(self):
+        pass
+
 
 class CsvPlot3D():
     def __init__(self, title = 'not given', csvfile = 'default.csv'):
@@ -85,5 +148,3 @@ class CsvPlot3D():
 
 if __name__ == '__main__':
     t = CsvPlot3D(csvfile = 'csvfile.csv')
-
-
