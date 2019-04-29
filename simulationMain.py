@@ -39,7 +39,8 @@ from packetsizecalculator import packetSizeEstimatorDQN
 
 results=[]
 row=[]
-    
+
+DEAFULT_SIMULATION_LENGTH = 1000
 
 def parse_arguments():
     """Provide a command line interface and parse provided arguments."""
@@ -105,16 +106,14 @@ def show_channel_model(args):
     write_to_csv()
     t = visualizerEngine.CsvPlot3D(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')
 
-def run_test(args, estimator, simulation_length = 1000):
+def run_test(args, estimator, interface):
     """run_test_simple_estimator.
 
     :param args: Information provided by the user as argparse arguments.
     """
-
+    simulation_length = interface.get_simulation_length()
     #logging.basicConfig(filename='mainlog.log',level=logging.DEBUG)
     logging.basicConfig(level=logging.INFO,format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
-    interface = channel.Channel(simulation_length)
-    interface.generate_channel_noise_model()
     setup_and_run_simulation(interface, 
                              estimator,
                              simulation_length)
@@ -132,9 +131,21 @@ def main():
     """Logic of the script."""
     args = parse_arguments()
     #show_channel_model(args)
-   
-    run_test(args, packetSizeEstimator.SimpleEstimator())
-    #run_test(args, packetSizeEstimatorDQN.DQNEstimator_3_actions(), simulation_length = 1000)
+
+    simulation_length = DEAFULT_SIMULATION_LENGTH
+
+    #Create channel
+    interface = channel.Channel(simulation_length)
+    interface.generate_channel_noise_model()
+    
+    interface.reset_time()
+    run_test(args, packetSizeEstimator.SimpleEstimator(), interface)
+    
+    interface.reset_time()
+    run_test(args, packetSizeEstimator.OptimalEstimator(), interface)
+    
+    #interface.reset_time()
+    #run_test(args, packetSizeEstimatorDQN.DQNEstimator_3_actions(), interface)
     
     #t = visualizerEngine.CsvPlot3D(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')
     #t = visualizerEngine.PlotXYgraph(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')

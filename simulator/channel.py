@@ -125,6 +125,12 @@ class Channel():
         if self._csvfile != None:
             self._csvfile.write("{}\n".format(self._channel_quality_vector[self._time]))
         return self._channel_quality_vector[self._time]
+        
+    def get_simulation_length(self):
+        return self._max_time
+
+    def reset_time(self):
+        self._time = 0
 
     def increment_time_base(self):
         self._time += 1

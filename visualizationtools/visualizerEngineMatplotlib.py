@@ -102,7 +102,7 @@ class PlotXYgraph():
             ax.yaxis.label.set_rotation(0)
             if num_charts == 1:
                 break
-
+        plt.ylim(bottom=0)
         plt.show()
 
     def show(self):

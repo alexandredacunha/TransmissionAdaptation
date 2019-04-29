@@ -76,10 +76,9 @@ class SimpleEstimator(PacketSizeEstimatorBase):
     def store_last_tx_result(self, acknack, cqi):
         if acknack == "ACK":
             self.packet_size = min(self.packet_size + self._up_rate, MAX_SIZE)
-            print(self.packet_size)
         if acknack == "NACK":
             self.packet_size = max(self.packet_size - self._down_rate, MIN_SIZE)
-            print(self.packet_size)
+        #print(self.packet_size)
             
     def store_sizes(self):
         self.calculated_sizes.append(self.packet_size)
@@ -91,67 +90,23 @@ class SimpleEstimator(PacketSizeEstimatorBase):
             vector = self.calculated_sizes)
 
 
-class DQNEstimator_3_actions(PacketSizeEstimatorBase):
+class OptimalEstimator(PacketSizeEstimatorBase):
     """simple packet size estimator"""
     def __init__(self):
-        super(DQNEstimator_3_actions, self).__init__()
+        super(OptimalEstimator, self).__init__()
         self.packet_size = DEFAULT_SIZE
-        self._up_rate = 50
-        self._down_rate = 50
         self.calculated_sizes = []
-        self.dqn_agent = DQNAgent(4,3)
-
-        self._prev_state = None
-        self._prev_action = None
 
     def get_optimal_size_for_next_tx(self, time):
-        if self.channel_quality_reported_prev == None or \
-           self.channel_quality_reported == None or \
-           self.transmission_results == None:
-            return self.packet_size
-        print("time {}".format(time))
-        reward = (self.transmission_results * self.packet_size)/100
-        print("reward {}".format(reward))
-        state = np.array([self.channel_quality_reported_prev,
-                 self.channel_quality_reported,
-                 self.transmission_results,
-                 self.packet_size])
-        state = np.reshape(state, [1, 4])
-        if self._prev_action != None:
-            self.dqn_agent.store_transition_in_D(self._prev_state, 
-                                                self._prev_action, 
-                                                reward,
-                                                state)
-        if len(self.dqn_agent.memory_D) > 100:
-            self.dqn_agent.replay(MINI_BATCH_SIZE)
-        # calculate best action from model
-        print("CQI: " + str(self.channel_quality_reported))
-        action = self.dqn_agent.act(state)
-        if action == 0:
-            pass # do nothing
-        elif action == 1:
-            self.packet_size = max(self.packet_size - self._down_rate, MIN_SIZE)
-        elif action == 2:
-            self.packet_size = min(self.packet_size + self._up_rate, MAX_SIZE)    
-        
-        # keep state, action, reward to store in memory D when new state received
-        self._prev_state = state
-        self._prev_action = action
-        print("packet size: {}".format(self.packet_size))
-
         self.store_sizes()
         return self.packet_size
 
     def store_last_tx_result(self, acknack, cqi):
-        if self.channel_quality_reported != None:
-            self.channel_quality_reported_prev = self.channel_quality_reported
+        if cqi == 100:
+            self.packet_size = MAX_SIZE
         else:
-            self.channel_quality_reported_prev = cqi # avoid init errors
-        self.channel_quality_reported = cqi
-        if acknack == "ACK":
-            self.transmission_results = ACK
-        if acknack == "NACK":
-            self.transmission_results = NACK
+            self.packet_size = int(min(1000000/(2000 - 20*cqi), MAX_SIZE))
+        #print(self.packet_size)
             
     def store_sizes(self):
         self.calculated_sizes.append(self.packet_size)
