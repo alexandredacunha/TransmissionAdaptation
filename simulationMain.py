@@ -40,6 +40,8 @@ from packetsizecalculator import packetSizeEstimatorDQN
 results=[]
 row=[]
 
+CSV_DIRECTORY = os.path.join(os.path.realpath(__file__), "csv_logs")
+
 DEAFULT_SIMULATION_LENGTH = 1000
 
 def parse_arguments():
@@ -70,9 +72,12 @@ def setup_and_run_simulation(interface, packet_size_estimator, simulation_length
     row.append(my_receiver.stats.total_data_received)
 
 def write_to_csv():
-    output_file = open("csvfile.csv", "w")
+    csv_filename_with_path = os.path.join(CSV_DIRECTORY, "csvfile.csv")
+    output_file = open(csv_filename_with_path, "w")
     writer = csv.writer(output_file)
     writer.writerows(results)
+    output_file.close()
+    return csv_filename_with_path
 
 def show_channel_model(args):
     """show_channel_model.
@@ -102,9 +107,10 @@ def show_channel_model(args):
         new_row = copy(row)
         results.append(new_row)
         del row[:]
-    
-    write_to_csv()
-    t = visualizerEngine.CsvPlot3D(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')
+
+    csv_filename_with_path = write_to_csv()
+    t = visualizerEngine.CsvPlot3D(csvfile = csv_filename_with_path, 
+                                   title = 'Throughput(channel_quality, packet_size)')
 
 def run_test(args, estimator, interface):
     """run_test_simple_estimator.
@@ -130,6 +136,8 @@ def run_test(args, estimator, interface):
 def main():
     """Logic of the script."""
     args = parse_arguments()
+    if not os.path.exists(CSV_DIRECTORY):
+        os.makedirs(CSV_DIRECTORY)
     #show_channel_model(args)
 
     simulation_length = DEAFULT_SIMULATION_LENGTH
