@@ -40,7 +40,7 @@ from packetsizecalculator import packetSizeEstimatorDQN
 results=[]
 row=[]
 
-CSV_DIRECTORY = os.path.join(os.path.realpath(__file__), "csv_logs")
+CSV_DIRECTORY = os.path.join(os.path.dirname(os.path.realpath(__file__)), "csv_logs")
 
 DEAFULT_SIMULATION_LENGTH = 1000
 
