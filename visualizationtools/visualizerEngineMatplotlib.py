@@ -40,16 +40,42 @@ from matplotlib import cm
 import pandas as pd
 from numpy import genfromtxt
 import numpy as np
-
+from scipy.ndimage.interpolation import shift
 
 
 class PlotXYgraph_live():
-    def __init__(self, title = 'not given', vector = None, csvfile = None, buffer_size = 100):
-        if csvfile != None:
-             my_data = genfromtxt(csvfile, delimiter=',')
-     
+    def __init__(self, title = 'not given', x_span = 100):
+        self._num_charts = 0
+        self._x_span = x_span
+        self._ylabels = []
+        self._data_series_vector = None
+        self._time_base = 0
+        PlotXYgraphtitle (title = 'not given', 
+                          vector = self_.vector_list, 
+                          ylabels_vector = None, 
+                          dataseries = "rows")
+
+    def add_chart(self, label):
+        self._ylabels.add(label)
+        new_vector = np.zeros(x_span)
+        self._data_series_vector = np.stack(self._data_series_vector,
+                                            new_vector)
+
+    def store_value(self, value, label):
+        #get index of label 
+        #with index put value in the end of the correct vector
+        pass
+
     def animate(self):
-         pass   
+         pass
+
+    def shift_vectors_left(self, shift):
+        shift(self_.vector_list[0], shift, cval=np.NaN)
+        pass
+
+    def increment_time(increment = 1):
+        self._time_base += increment
+        self.shift_vectors_left(shift = increment)
 
 
 class PlotXYgraph_from_multiple_csvfiles():

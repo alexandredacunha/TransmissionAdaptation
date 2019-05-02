@@ -42,6 +42,7 @@ class Channel():
         self._max_time = simulation_length
         self._channel_quality_vector = numpy.full(self._max_time, 100)
         self._time = 0
+        self._instances_monitoring_time_list = []
         self._csvfile = None
         if csvfilelog != None:
             self._csvfile = open(csvfilelog, "w")
@@ -132,8 +133,13 @@ class Channel():
     def reset_time(self):
         self._time = 0
 
+    def register_instance_to_monitor_time(self, instance):
+        self._instances_monitoring_time_list.add(instance)
+
     def increment_time_base(self):
         self._time += 1
+        for instance in self._instances_monitoring_time_list:
+            instance.increment_time()
 
     def get_time(self):
         return self._time

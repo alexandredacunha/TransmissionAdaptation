@@ -138,6 +138,7 @@ def main():
     args = parse_arguments()
     if not os.path.exists(CSV_DIRECTORY):
         os.makedirs(CSV_DIRECTORY)
+
     #show_channel_model(args)
 
     simulation_length = DEAFULT_SIMULATION_LENGTH

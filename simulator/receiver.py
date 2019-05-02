@@ -39,7 +39,7 @@ class ReceiverStatistics():
         
 
 
-class Receiver(object):
+class Receiver():
     """A class for """
 
     def __init__(self):
