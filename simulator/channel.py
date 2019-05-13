@@ -39,6 +39,7 @@ class Channel():
     def __init__(self, simulation_length, csvfilelog = None):
         self._receiver_queue = queue.Queue()
         self._sender_queue = queue.Queue()
+        self._observer_list = []
         self._max_time = simulation_length
         self._channel_quality_vector = numpy.full(self._max_time, 100)
         self._time = 0
@@ -77,32 +78,8 @@ class Channel():
             raise RuntimeError('uknown receiver: %s ' % caller_name)
 
     def generate_channel_noise_model(self):
-        initial_CQ = 50
-        current_CQ = initial_CQ
-        time_index = 0
-        self._channel_quality_vector[time_index] = current_CQ
-        time_index += 1
-        while 1:
-            next_limit = int(random.uniform(0, 100))
-            rate = (random.uniform(1, MAX_RATE_DOWN))
-            if next_limit < current_CQ:
-                while current_CQ > next_limit:
-                    current_CQ -= rate
-                    current_CQ = max(0, current_CQ)
-                    self._channel_quality_vector[time_index] = current_CQ
-                    time_index += 1
-                    if time_index >= (self._max_time - 1):
-                        return
-            elif next_limit > current_CQ:
-                rate =  (random.uniform(1, MAX_RATE_UP))
-                while current_CQ < next_limit:
-                    current_CQ += rate
-                    current_CQ = min(100, current_CQ)
-                    self._channel_quality_vector[time_index] = current_CQ
-                    time_index += 1
-                    if time_index >= (self._max_time - 1):
-                        return
-
+        channel_model(self._channel_quality_vector, self._max_time)
+ 
     def plot_channel(self):
         print(self._channel_quality_vector)
         visualizerEngine.PlotXYgraph(
@@ -132,6 +109,9 @@ class Channel():
 
     def reset_time(self):
         self._time = 0
+        
+    def register_observer(self, observer):
+        self._observer_list.add(observer)
 
     def register_instance_to_monitor_time(self, instance):
         self._instances_monitoring_time_list.add(instance)
@@ -143,3 +123,31 @@ class Channel():
 
     def get_time(self):
         return self._time
+
+
+def channel_model(channel_vector, max_time):
+    initial_CQ = 50
+    current_CQ = initial_CQ
+    time_index = 0
+    channel_vector[time_index] = current_CQ
+    time_index += 1
+    while 1:
+        next_limit = int(random.uniform(0, 100))
+        rate = (random.uniform(1, MAX_RATE_DOWN))
+        if next_limit < current_CQ:
+            while current_CQ > next_limit:
+                current_CQ -= rate
+                current_CQ = max(0, current_CQ)
+                channel_vector[time_index] = current_CQ
+                time_index += 1
+                if time_index >= (max_time - 1):
+                    return
+        elif next_limit > current_CQ:
+            rate =  (random.uniform(1, MAX_RATE_UP))
+            while current_CQ < next_limit:
+                current_CQ += rate
+                current_CQ = min(100, current_CQ)
+                channel_vector[time_index] = current_CQ
+                time_index += 1
+                if time_index >= (max_time - 1):
+                    return

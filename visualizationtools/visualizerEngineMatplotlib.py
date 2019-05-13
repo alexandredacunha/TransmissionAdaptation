@@ -43,25 +43,25 @@ import numpy as np
 from scipy.ndimage.interpolation import shift
 
 
-class PlotXYgraph_live():
+class XYgraph_live():
     def __init__(self, title = 'not given', x_span = 100):
         self._num_charts = 0
         self._x_span = x_span
         self._ylabels = []
         self._data_series_vector = None
         self._time_base = 0
-        PlotXYgraphtitle (title = 'not given', 
-                          vector = self_.vector_list, 
-                          ylabels_vector = None, 
-                          dataseries = "rows")
+        PlotXYgraph(title = 'not given', 
+                    vector = self_.vector_list, 
+                    ylabels_vector = None, 
+                    dataseries = "rows")
 
-    def add_chart(self, label):
+    def add(self, label):
         self._ylabels.add(label)
         new_vector = np.zeros(x_span)
         self._data_series_vector = np.stack(self._data_series_vector,
                                             new_vector)
 
-    def store_value(self, value, label):
+    def update_value(self, label, value):
         #get index of label 
         #with index put value in the end of the correct vector
         pass

@@ -23,7 +23,11 @@
 #  
 
 import logging
+import statistics
 from simulator import messages
+from collections import deque
+
+avgWindow = 10
 
 class ReceiverStatistics():
     def __init__(self):
@@ -36,7 +40,6 @@ class ReceiverStatistics():
         print("got " + str(self.total_data_received) + " data units")
         print("nr. Acks: " + str(self.total_acks))
         print("nr. Nacks: " + str(self.total_nacks))
-        
 
 
 class Receiver():
@@ -46,10 +49,18 @@ class Receiver():
         self.interface = None
         self.total_data = 0
         self.stats = ReceiverStatistics()
+        self._tp_calculation = deque(maxlen = avgWindow)
+        self._observer_list = []
         print("receiver created!")
 
     def register_interface(self, interface):
         self.interface = interface
+        
+    def register_observer(self, observer):
+        observer.add("receiver_throughput")
+        observer.add("receiver_packet_size")
+        observer.add("receiver_cqi")
+        self.register_observer(observer)
         
     def receive(self):
         return self.interface.receive()
@@ -62,17 +73,29 @@ class Receiver():
         if msg.discard == True:
             response.acknack = "NACK"
             self.stats.total_nacks += 1
+            self._tp_calculation.append(0)
         else:
             response.acknack = "ACK"
             self.total_data += msg.payload_size
             self.stats.total_data_received += msg.payload_size
             self.stats.total_acks += 1
+            self._observer_value_update("receiver_packet_size", 
+                                         msg.payload_size)
+            self._tp_calculation.append(msg.payload_size)
         response.cqi = self.interface.get_current_cqi()
+        self._observer_value_update("receiver_throughput", 
+                                    statistics.mean(self._tp_calculation))
+        self._observer_value_update("receiver_cqi", 
+                                    response.cqi)
         self.send(response)
-    
+
     def print_stats(self):
         self.stats.print_all_stats()
-            
+        
+    def _observer_value_update(self, label, value):
+        for observer in self._observer_list:
+            observer.update_value(label, value)
+
     def run(self):
         msg = self.receive()
         if msg != None:

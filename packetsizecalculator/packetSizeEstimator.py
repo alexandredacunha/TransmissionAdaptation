@@ -40,6 +40,7 @@ class PacketSizeEstimatorBase():
         self.channel_quality_reported_prev = None
         self.channel_quality_reported = None
         self.transmission_results = None
+        self._observer_list = None
         self.score = 0
 
     @abstractmethod
