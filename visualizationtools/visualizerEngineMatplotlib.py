@@ -67,10 +67,10 @@ class XYgraph_live():
         pass
 
     def animate(self):
-        self._graph.plot(title = 'not given', 
-                         vector = self_.vector_list, 
-                         ylabels_vector = None, 
-                         dataseries = "rows")
+        animation.FuncAnimation(self._graph.plot(title = 'not given', 
+                                vector = self_.vector_list, 
+                                ylabels_vector = None, 
+                                dataseries = "rows")
 
     def shift_vectors_left(self, shift):
         shift(self_.vector_list[0], shift, cval=np.NaN)
