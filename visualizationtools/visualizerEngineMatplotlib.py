@@ -50,12 +50,12 @@ class XYgraph_live():
         self._ylabels = []
         self._data_series_vector = None
         self._time_base = 0
-        PlotXYgraph(title = 'not given', 
-                    vector = self_.vector_list, 
-                    ylabels_vector = None, 
-                    dataseries = "rows")
+        self._graph = PlotXYgraph()
 
     def add(self, label):
+        '''
+        Adds new plot to the set.
+        '''
         self._ylabels.add(label)
         new_vector = np.zeros(x_span)
         self._data_series_vector = np.stack(self._data_series_vector,
@@ -67,13 +67,16 @@ class XYgraph_live():
         pass
 
     def animate(self):
-         pass
+        self._graph.plot(title = 'not given', 
+                         vector = self_.vector_list, 
+                         ylabels_vector = None, 
+                         dataseries = "rows")
 
     def shift_vectors_left(self, shift):
         shift(self_.vector_list[0], shift, cval=np.NaN)
         pass
 
-    def increment_time(increment = 1):
+    def increment_time(self, increment = 1):
         self._time_base += increment
         self.shift_vectors_left(shift = increment)
 
@@ -90,7 +93,10 @@ class PlotXYgraph_from_multiple_csvfiles():
 
 
 class PlotXYgraph():
-    def __init__(self, title = 'not given', vector = None, csvfile = None, ylabels_vector = None, dataseries = "columns"):
+    def __init__(self):
+        pass
+
+    def plot(self, title = 'not given', vector = None, csvfile = None, ylabels_vector = None, dataseries = "columns"):
         """
         plot xy chart using matplotlib
         """
@@ -173,4 +179,8 @@ class CsvPlot3D():
 
 
 if __name__ == '__main__':
-    t = CsvPlot3D(csvfile = 'csvfile.csv')
+    #t = CsvPlot3D(csvfile = 'csvfile.csv')
+    #test live graphic
+    chart = XYgraph_live()
+    chart.add("test_data")
+    

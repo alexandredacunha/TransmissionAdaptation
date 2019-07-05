@@ -129,7 +129,8 @@ def run_test(args, estimator, interface):
      
     combined_chart_data = np.stack((interface._channel_quality_vector, 
                                     np.resize(np.array(estimator.calculated_sizes), reference_shape)))
-    visualizerEngine.PlotXYgraph(vector = combined_chart_data, 
+    chart = visualizerEngine.PlotXYgraph()
+    chart.plot(vector = combined_chart_data, 
                                  title = 'Estimator',
                                  dataseries = "rows")
 
@@ -152,6 +153,7 @@ def main():
     
     interface.reset_time()
     run_test(args, packetSizeEstimator.OptimalEstimator(), interface)
+
     
     #interface.reset_time()
     #run_test(args, packetSizeEstimatorDQN.DQNEstimator_3_actions(), interface)
