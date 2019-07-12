@@ -133,6 +133,7 @@ def run_test(args, estimator, interface):
     chart.plot(vector = combined_chart_data, 
                                  title = 'Estimator',
                                  dataseries = "rows")
+    chart.show()
 
 def main():
     """Logic of the script."""
@@ -153,10 +154,9 @@ def main():
     
     interface.reset_time()
     run_test(args, packetSizeEstimator.OptimalEstimator(), interface)
-
     
-    #interface.reset_time()
-    #run_test(args, packetSizeEstimatorDQN.DQNEstimator_3_actions(), interface)
+    interface.reset_time()
+    run_test(args, packetSizeEstimatorDQN.DQNEstimator_3_actions(), interface)
     
     #t = visualizerEngine.CsvPlot3D(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')
     #t = visualizerEngine.PlotXYgraph(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')

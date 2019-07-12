@@ -56,21 +56,26 @@ class XYgraph_live():
         '''
         Adds new plot to the set.
         '''
-        self._ylabels.add(label)
-        new_vector = np.zeros(x_span)
-        self._data_series_vector = np.stack(self._data_series_vector,
-                                            new_vector)
+        self._ylabels.append(label)
+        new_vector = np.zeros(self._x_span)
+        if self._data_series_vector != None:
+            self._data_series_vector = np.stack(self._data_series_vector,
+                                                new_vector)
+        else:
+            self._data_series_vector = new_vector
 
     def update_value(self, label, value):
+        index = self._ylabels.index(label)
+        self._data_series_vector[index, self._time_base] = value
         #get index of label 
         #with index put value in the end of the correct vector
         pass
 
     def animate(self):
-        animation.FuncAnimation(self._graph.plot(title = 'not given', 
-                                vector = self_.vector_list, 
-                                ylabels_vector = None, 
-                                dataseries = "rows")
+        animation.FuncAnimation(self._graph.fig, self._graph.plot(title = 'not given', 
+                                vector = self._data_series_vector, 
+                                ylabels_vector = self._ylabels, 
+                                dataseries = "rows"))
 
     def shift_vectors_left(self, shift):
         shift(self_.vector_list[0], shift, cval=np.NaN)
@@ -94,7 +99,7 @@ class PlotXYgraph_from_multiple_csvfiles():
 
 class PlotXYgraph():
     def __init__(self):
-        pass
+        self.fig = None
 
     def plot(self, title = 'not given', vector = None, csvfile = None, ylabels_vector = None, dataseries = "columns"):
         """
@@ -135,9 +140,10 @@ class PlotXYgraph():
             if num_charts == 1:
                 break
         plt.ylim(bottom=0)
-        plt.show()
+        
 
     def show(self):
+        plt.show()
         pass
 
 
@@ -183,4 +189,5 @@ if __name__ == '__main__':
     #test live graphic
     chart = XYgraph_live()
     chart.add("test_data")
-    
+    chart.animate()
+    chart.update_value("test_data", 10)
