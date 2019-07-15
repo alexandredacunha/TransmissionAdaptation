@@ -48,6 +48,20 @@ REPLAY_START_SIZE = 100
 NO_OP_MAX = 30 # not used
 
 
+class ReplayMemoryBase():
+    @abstractmethod
+    def __init__(self, memory_size):
+        pass
+    
+    @abstractmethod
+    def store_replay_data(self, data):
+        pass
+    
+    @abstractmethod
+    def sample_minibatch(self)
+        pass
+
+
 class DQNAgent():
     """fixed packet size estimator"""
     def __init__(self, state_size, action_size):
@@ -123,3 +137,14 @@ def normalize(v):
     if norm == 0: 
        return v
     return v / norm
+
+
+class ReplayMemoryDeque(ReplayMemoryBase):
+    def __init__(self, memory_size):
+        self.memory_D = deque(maxlen = memory_size)
+    
+    def store_replay_data(self, data):
+        pass
+    
+    def sample_minibatch()
+        pass

@@ -148,6 +148,9 @@ def main():
     #Create channel
     interface = channel.Channel(simulation_length)
     interface.generate_channel_noise_model()
+
+    interface.reset_time()
+    run_test(args, packetSizeEstimatorDQN.DQNEstimator_3_actions(), interface)
     
     interface.reset_time()
     run_test(args, packetSizeEstimator.SimpleEstimator(), interface)
@@ -155,8 +158,6 @@ def main():
     interface.reset_time()
     run_test(args, packetSizeEstimator.OptimalEstimator(), interface)
     
-    interface.reset_time()
-    run_test(args, packetSizeEstimatorDQN.DQNEstimator_3_actions(), interface)
     
     #t = visualizerEngine.CsvPlot3D(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')
     #t = visualizerEngine.PlotXYgraph(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')
