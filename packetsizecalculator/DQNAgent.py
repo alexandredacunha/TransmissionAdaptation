@@ -23,7 +23,7 @@
 #  
 
 import visualizationtools.visualizerEngineMatplotlib as visualizerEngine
-
+from abc import ABCMeta, abstractmethod
 import random
 import numpy as np
 from collections import deque
@@ -54,20 +54,23 @@ class ReplayMemoryBase():
         pass
     
     @abstractmethod
-    def store_replay_data(self, data):
+    def store_replay_data(self, state, action, reward, next_state):
         pass
     
     @abstractmethod
-    def sample_minibatch(self)
+    def sample_minibatch(self, batch_size):
         pass
 
+    @abstractmethod
+    def get_size(self):
+        return 0
 
 class DQNAgent():
     """fixed packet size estimator"""
     def __init__(self, state_size, action_size):
         self.state_size = state_size
         self.action_size = action_size
-        self.memory_D = deque(maxlen = REPLAY_MEMORY_SIZE) # D
+        self.memory_D = ReplayMemoryDeque(REPLAY_MEMORY_SIZE) # D
         self.gamma = DISCOUNT_FACTOR # importance of future rewards
         self.epsilon_greedy = INITIAL_EXPLORATION # exploration rate
         self.epsilon_decay = pow(FINAL_EXPLORATION, 1.0/FINAL_EXPLORATION_STEP)
@@ -84,7 +87,8 @@ class DQNAgent():
         return mlp
         
     def store_transition_in_D(self, state, action, reward, next_state):
-        self.memory_D.append((state, action, reward, next_state))
+        #self.memory_D.append((state, action, reward, next_state))
+        self.memory_D.store_replay_data(state, action, reward, next_state)
         
     def act(self, state):
         # with probability epsilon_greedy choose random action for exploring environment
@@ -99,7 +103,8 @@ class DQNAgent():
         return action_corresponding_max_predicted_reward
         
     def replay(self, batch_size):
-        sample_minibatch_from_memory_D = random.sample(self.memory_D, batch_size)
+        #sample_minibatch_from_memory_D = random.sample(self.memory_D, batch_size)
+        sample_minibatch_from_memory_D = self.memory_D.sample_minibatch(batch_size)
         for state, action, reward, next_state in sample_minibatch_from_memory_D:
             print("-----------")
             print("state: " + str(state))
@@ -143,8 +148,25 @@ class ReplayMemoryDeque(ReplayMemoryBase):
     def __init__(self, memory_size):
         self.memory_D = deque(maxlen = memory_size)
     
-    def store_replay_data(self, data):
-        pass
+    def store_replay_data(self, state, action, reward, next_state):
+        self.memory_D.append((state, action, reward, next_state))
     
-    def sample_minibatch()
-        pass
+    def sample_minibatch(self, batch_size):
+        return random.sample(self.memory_D, batch_size)
+
+    def get_size(self):
+        return len(self.memory_D)
+
+
+class ReplayMemoryDictionary(ReplayMemoryBase):
+    def __init__(self, memory_size):
+        self.memory_D = deque(maxlen = memory_size)
+    
+    def store_replay_data(self, state, action, reward, next_state):
+        self.memory_D.append((state, action, reward, next_state))
+    
+    def sample_minibatch(self, batch_size):
+        return random.sample(self.memory_D, batch_size)
+
+    def get_size(self):
+        return len(self.memory_D)

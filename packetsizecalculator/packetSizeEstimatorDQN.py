@@ -44,7 +44,7 @@ class DQNEstimator_3_actions(PacketSizeEstimatorBase):
         self._up_rate = 50
         self._down_rate = 50
         self.calculated_sizes = []
-        self.dqn_agent = DQNAgent(4,3)
+        self.dqn_agent = DQNAgent(state_size = 4, action_size = 3)
 
         self._prev_state = None
         self._prev_action = None
@@ -67,7 +67,7 @@ class DQNEstimator_3_actions(PacketSizeEstimatorBase):
                                                 self._prev_action, 
                                                 reward,
                                                 state)
-        if len(self.dqn_agent.memory_D) > 100:
+        if (self.dqn_agent.memory_D.get_size()) > 100:
             self.dqn_agent.replay(MINI_BATCH_SIZE)
         # calculate best action from model
         print("CQI: " + str(self.channel_quality_reported))

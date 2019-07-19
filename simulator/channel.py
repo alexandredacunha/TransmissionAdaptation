@@ -43,6 +43,7 @@ class Channel():
         self._max_time = simulation_length
         self._channel_quality_vector = numpy.full(self._max_time, 100)
         self._time = 0
+        self._seed = 0
         self._instances_monitoring_time_list = []
         self._csvfile = None
         if csvfilelog != None:
@@ -109,6 +110,10 @@ class Channel():
 
     def reset_time(self):
         self._time = 0
+
+    def initialize_seed_for_channel_model(self, seed = 0):
+        self._seed = seed
+        random.seed(seed)
         
     def register_observer(self, observer):
         self._observer_list.add(observer)

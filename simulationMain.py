@@ -150,12 +150,15 @@ def main():
     interface.generate_channel_noise_model()
 
     interface.reset_time()
+    interface.initialize_seed_for_channel_model()
     run_test(args, packetSizeEstimatorDQN.DQNEstimator_3_actions(), interface)
     
     interface.reset_time()
+    interface.initialize_seed_for_channel_model()
     run_test(args, packetSizeEstimator.SimpleEstimator(), interface)
     
     interface.reset_time()
+    interface.initialize_seed_for_channel_model()
     run_test(args, packetSizeEstimator.OptimalEstimator(), interface)
     
     
