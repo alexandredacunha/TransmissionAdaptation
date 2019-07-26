@@ -49,7 +49,7 @@ REPLAY_START_SIZE = 100
 NO_OP_MAX = 30 # not used
 
 
-class DQNAgent():
+class DQNAgentFullRange():
     """fixed packet size estimator"""
     def __init__(self, state_size, action_size):
         self.state_size = state_size
@@ -81,7 +81,7 @@ class DQNAgent():
             return exploration_action
         print("EXPLOIT!!!!")
         exploitation_action_from_Q = self.Q_function_NN.predict(state)[0]
-        print(exploitation_action_from_Q)
+        #print(exploitation_action_from_Q)
         action_corresponding_max_predicted_reward = np.argmax(exploitation_action_from_Q)
         print("action " + str(action_corresponding_max_predicted_reward))
         return action_corresponding_max_predicted_reward
@@ -101,14 +101,14 @@ class DQNAgent():
                 reward_in_next_state_when_optimal_action_taken = np.amax(self.Q_function_NN.predict(next_state)[0])
                 target_y = (reward + self.gamma * reward_in_next_state_when_optimal_action_taken)
             Q_state_action = self.Q_function_NN.predict(state)
-            print("predicted state: " + str(Q_state_action))
+            #print("predicted state: " + str(Q_state_action))
             # correct the output state with what would be the real reward from 
             # experience when having selecting the "action" and predicted future reward
             Q_state_action[0][action] = target_y 
-            print("expected: " + str(Q_state_action))
+            #print("expected: " + str(Q_state_action))
 
             Q_state_action = normalize(Q_state_action)
-            print("expected Norm : " + str(Q_state_action))
+            #print("expected Norm : " + str(Q_state_action))
             # gradient descent giving calculated above rewards array as training data
             self.Q_function_NN.fit(state, Q_state_action, epochs=1, verbose=0) 
         if self.epsilon_greedy > self.epsilon_min:

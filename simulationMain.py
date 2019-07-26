@@ -36,6 +36,7 @@ from simulator import channel
 import visualizationtools.visualizerEngineMatplotlib as visualizerEngine
 from packetsizecalculator import packetSizeEstimator
 from packetsizecalculator import packetSizeEstimatorDQN
+from packetsizecalculator import packetSizeEstimatorDQNFullRange
 
 results=[]
 row=[]
@@ -152,14 +153,18 @@ def main():
     interface.reset_time()
     interface.initialize_seed_for_channel_model()
     run_test(args, packetSizeEstimatorDQN.DQNEstimator_3_actions(), interface)
+
+#    interface.reset_time()
+#    interface.initialize_seed_for_channel_model()
+#    run_test(args, packetSizeEstimatorDQNFullRange.DQNEstimatorFullRange(), interface)
+
+#    interface.reset_time()
+#    interface.initialize_seed_for_channel_model()
+#    run_test(args, packetSizeEstimator.SimpleEstimator(), interface)
     
-    interface.reset_time()
-    interface.initialize_seed_for_channel_model()
-    run_test(args, packetSizeEstimator.SimpleEstimator(), interface)
-    
-    interface.reset_time()
-    interface.initialize_seed_for_channel_model()
-    run_test(args, packetSizeEstimator.OptimalEstimator(), interface)
+#    interface.reset_time()
+#    interface.initialize_seed_for_channel_model()
+#    run_test(args, packetSizeEstimator.OptimalEstimator(), interface)
     
     
     #t = visualizerEngine.CsvPlot3D(csvfile = 'csvfile.csv', title = 'Throughput(channel_quality, packet_size)')

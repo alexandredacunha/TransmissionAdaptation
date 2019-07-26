@@ -25,26 +25,26 @@
 from abc import ABCMeta, abstractmethod
 import numpy as np
 import visualizationtools.visualizerEngineMatplotlib as visualizerEngine
-from packetsizecalculator.DQNAgent import DQNAgent
-from packetsizecalculator.DQNAgent import MINI_BATCH_SIZE
+from packetsizecalculator.DQNAgentFullRange import DQNAgentFullRange
+from packetsizecalculator.DQNAgentFullRange import MINI_BATCH_SIZE
 from packetsizecalculator.packetSizeEstimator import PacketSizeEstimatorBase
 
 DEFAULT_SIZE = 1000/2
-MAX_SIZE = 1000
-MIN_SIZE = 0
+STATE_SIZE_FULL = 4
+ACTION_SIZE_FULL = 1000
+MAX_SIZE_FULL = 1000
+MIN_SIZE_FULL = 0
 ACK = 1
 NACK = -1
 
 
-class DQNEstimator_3_actions(PacketSizeEstimatorBase):
+class DQNEstimatorFullRange(PacketSizeEstimatorBase):
     """simple packet size estimator"""
     def __init__(self):
-        super(DQNEstimator_3_actions, self).__init__()
+        super(DQNEstimatorFullRange, self).__init__()
         self.packet_size = DEFAULT_SIZE
-        self._up_rate = 50
-        self._down_rate = 50
         self.calculated_sizes = []
-        self.dqn_agent = DQNAgent(state_size = 4, action_size = 3)
+        self.dqn_agent = DQNAgentFullRange(state_size = STATE_SIZE_FULL, action_size = ACTION_SIZE_FULL)
 
         self._prev_state = None
         self._prev_action = None
@@ -73,12 +73,7 @@ class DQNEstimator_3_actions(PacketSizeEstimatorBase):
         # calculate best action from model
         print("CQI: " + str(self.channel_quality_reported))
         action = self.dqn_agent.act(state)
-        if action == 0:
-            pass # do nothing
-        elif action == 1:
-            self.packet_size = max(self.packet_size - self._down_rate, MIN_SIZE)
-        elif action == 2:
-            self.packet_size = min(self.packet_size + self._up_rate, MAX_SIZE)    
+        self.packet_size = action
         
         # keep state, action, reward to store in memory D when new state received
         self._prev_state = state
